@@ -157,6 +157,8 @@ vim.opt.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
 
+-- Réduction de la taille des tabs
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -237,6 +239,453 @@ require('lazy').setup({
   --
   -- Use `opts = {}` to force a plugin to be loaded.
   --
+  --
+  --
+
+
+  {
+    'utilyre/barbecue.nvim',
+    name = 'barbecue',
+    version = '*',
+    dependencies = {
+      'SmiteshP/nvim-navic',
+      'nvim-tree/nvim-web-devicons',
+    },
+    opts = {
+      theme = 'auto',
+      show_navic = true,
+    },
+    config = function()
+      require('barbecue').setup()
+    end,
+  },
+
+  {
+    'SidOfc/carbon.nvim',
+    config = function()
+      require('carbon').setup {
+        auto_reveal = true,
+      }
+    end,
+  },
+
+  {
+    'numToStr/FTerm.nvim',
+    config = function()
+      require('FTerm').setup {
+        ft = 'FTerm',
+        cmd = 'zsh',
+        auto_close = true,
+        hl = 'NormalFloat',
+        blend = 10,
+        clear_env = false,
+        env = nil,
+        on_exit = nil,
+        on_stdout = nil,
+        on_stderr = nil,
+        border = 'double',
+        dimensions = {
+          height = 0.5,
+          width = 0.5,
+          x = 0.5,
+          y = 0.5,
+        },
+      }
+    end,
+  },
+
+  {
+    'kdheepak/lazygit.nvim',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+    },
+    cmd = {
+      'LazyGit',
+      'LazyGitConfig',
+      'LazyGitCurrentFile',
+      'LazyGitFilter',
+      'LazyGitFilterCurrentFile',
+    },
+    keys = {
+      { '<leader>lg', '<cmd>LazyGit<cr>', desc = 'Ouvrir LazyGit' },
+    },
+    config = function()
+      vim.g.lazygit_floating_window_winblend = 0
+      vim.g.lazygit_floating_window_scaling_factor = 0.9
+      vim.g.lazygit_floating_window_border_chars = { '╭', '─', '╮', '│', '╯', '─', '╰', '│' }
+      vim.g.lazygit_floating_window_use_plenary = 1
+      vim.g.lazygit_use_neovim_remote = 1
+    end,
+  },
+
+  {
+    'ellisonleao/gruvbox.nvim',
+    priority = 1000,
+    config = function()
+      require('gruvbox').setup {
+        contrast = 'soft',
+        transparent_mode = false,
+        terminal_colors = true,
+      }
+      vim.o.background = 'light'
+      vim.cmd 'colorscheme gruvbox'
+    end,
+  },
+
+  {
+    'echasnovski/mini.indentscope',
+    version = false,
+    config = function()
+      require('mini.indentscope').setup {
+        draw = {
+          delay = 100,
+          animation = require('mini.indentscope').gen_animation.none(),
+          priority = 2,
+        },
+        mappins = {
+          object_scope = 'ii',
+          object_scope_with_border = 'ai',
+          goto_top = '[i',
+          goto_bottom = ']i',
+        },
+        options = {
+          border = 'both',
+          indent_at_cursor = true,
+          try_as_border = false,
+        },
+        symbol = ':',
+      }
+    end,
+    event = { 'BufReadPre', 'BufNewFile' },
+  },
+
+  {
+    'echasnovski/mini.pairs',
+    version = '*',
+    config = function()
+      require('mini.pairs').setup {
+        modes = { insert = true, command = false, terminal = false },
+        mappins = {
+          ['('] = { action = 'open', pair = '()', neigh_pattern = '[^\\].' },
+          ['['] = { action = 'open', pair = '[]', neigh_pattern = '[^\\].' },
+          ['{'] = { action = 'open', pair = '{}', neigh_pattern = '[^\\].' },
+          [')'] = { action = 'close', pair = '()', neigh_pattern = '[^\\].' },
+          ['}'] = { action = 'close', pair = '{}', neigh_pattern = '[^\\].' },
+          ['"'] = { action = 'closeopen', pair = '""', neigh_pattern = '[^%a\\].', register = { cr = false } },
+          ["'"] = { action = 'closeopen', pair = "''", neigh_pattern = '[^%a\\].', register = { cr = false } },
+          ['`'] = { action = 'closeopen', pair = '``', neigh_pattern = '[^\\].', register = { cr = false } },
+        },
+      }
+    end,
+  },
+
+  {
+    'echasnovski/mini.surround',
+    version = '*',
+    config = function()
+      require('mini.surround').setup {
+        custom_surroundings = nil,
+        highlight_duration = 500,
+        mappings = {
+          add = 'sa',
+          delete = 'sd',
+          find = 'sf',
+          find_left = 'sF',
+          highlight = 'sh',
+          replace = 'sr',
+          update_n_lines = 'sn',
+          suffix_last = 'l',
+          suffit_next = 'n',
+        },
+        n_lines = 20,
+        respect_selection_type = false,
+        search_method = 'cover',
+        silent = false,
+      }
+    end,
+  },
+
+  {
+    'nvim-neo-tree/neo-tree.nvim',
+    branch = 'v3.x', -- Utilise la dernière version stable
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-tree/nvim-web-devicons', -- Optionnel, recommandé pour les icônes
+      'MunifTanjim/nui.nvim', -- Nécessaire pour les composants UI
+      {
+        's1n7ax/nvim-window-picker',
+        version = '2.*',
+        config = function()
+          require('window-picker').setup {
+            autoselect_one = true,
+            include_current_win = false,
+            filter_rules = {
+              bo = {
+                filetype = { 'neo-tree', 'neo-tree-popup', 'notify' },
+                buftype = { 'terminal', 'quickfix' },
+              },
+            },
+          }
+        end,
+      },
+    },
+    config = function()
+      -- Définition des icônes pour les diagnostics
+      vim.fn.sign_define('DiagnosticSignError', { text = ' ', texthl = 'DiagnosticSignError' })
+      vim.fn.sign_define('DiagnosticSignWarn', { text = ' ', texthl = 'DiagnosticSignWarn' })
+      vim.fn.sign_define('DiagnosticSignInfo', { text = ' ', texthl = 'DiagnosticSignInfo' })
+      vim.fn.sign_define('DiagnosticSignHint', { text = '󰌵', texthl = 'DiagnosticSignHint' })
+
+      require('neo-tree').setup {
+        close_if_last_window = true, -- Fermer Neo-tree si c'est la dernière fenêtre
+        popup_border_style = 'rounded', -- Style des bordures pour les fenêtres pop-up
+        enable_git_status = true, -- Activer l'état Git
+        enable_diagnostics = true, -- Activer les diagnostics
+        window = {
+          position = 'left', -- Position du panneau Neo-tree (peut être "left", "right", "float")
+          width = 40, -- Largeur du panneau
+          mappings = {
+            ['<space>'] = 'toggle_node',
+            ['<cr>'] = 'open',
+            ['S'] = 'open_split',
+            ['s'] = 'open_vsplit',
+            ['t'] = 'open_tabnew',
+            ['C'] = 'close_node',
+            ['R'] = 'refresh',
+            ['?'] = 'show_help',
+          },
+        },
+        filesystem = {
+          follow_current_file = true, -- Suivre automatiquement le fichier courant
+          hijack_netrw_behavior = 'open_default', -- Remplacer netrw
+          filtered_items = {
+            hide_dotfiles = true, -- Masquer les fichiers cachés
+            hide_gitignored = true, -- Masquer les fichiers ignorés par Git
+          },
+        },
+        enable_migration_notifications = false,
+      }
+
+      -- Raccourci pour ouvrir Neo-tree
+      vim.cmd [[nnoremap \ :Neotree toggle<cr>]]
+    end,
+  },
+
+  {
+    'folke/noice.nvim',
+    event = 'VeryLazy',
+    dependencies = {
+      'MunifTanjim/nui.nvim',
+      'rcarriga/nvim-notify',
+    },
+    config = function()
+      require('noice').setup {
+        lsp = {
+          override = {
+            ['vim.lsp.util.convert_input_to_markdown_lines'] = true,
+            ['vim.lsp.util.stylize_markdown'] = true,
+            ['cmp.entry.get_documentation'] = true,
+          },
+        },
+        presets = {
+          bottom_search = true,
+          command_palette = true,
+          long_message_to_split = true,
+          inc_rename = false,
+          lsp_doc_border = false,
+        },
+      }
+    end,
+  },
+
+  {
+    'rcarriga/nvim-notify',
+    config = function()
+      require('notify').setup {
+        stages = 'fade_in_slide_out',
+        timeout = 3000,
+        background_colour = '#000000',
+        fps = 30,
+        icons = {
+          ERROR = '',
+          WARN = '',
+          INFO = '',
+          DEBUG = '',
+          TRACE = '✎',
+        },
+        render = 'default',
+        minimum_width = 50,
+      }
+      vim.notify = require 'notify'
+    end,
+  },
+
+  {
+    'mfussenegger/nvim-lint',
+    event = 'BufWritePost',
+    config = function()
+      require('lint').linters_by_ft = {
+        markdown = { 'vale' },
+        python = { 'pylint' },
+        javascript = { 'eslint' },
+        lua = { 'luacheck' },
+      }
+      vim.api.nvim_create_autocmd({ 'BufWritePost' }, {
+        callback = function()
+          require('lint').try_lint()
+        end,
+      })
+    end,
+  },
+
+  {
+    'tpope/vim-sleuth',
+    config = function() end,
+  },
+
+  {
+    'nvim-lua/plenary.nvim',
+  },
+  {
+    'nvim-pack/nvim-spectre',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-tree/nvim-web-devicons',
+    },
+    config = function()
+      require('spectre').setup()
+    end,
+  },
+
+  {
+    'nvim-treesitter/nvim-treesitter',
+    build = ':TSUpdate',
+    opts = {
+      ensure_installed = { 'javascript', 'html', 'css', 'typescript' },
+      highlight = { enabled = true },
+    },
+  },
+
+  {
+    'neovim/nvim-lspconfig',
+    dependencies = {
+      -- Installation automatique des LSPs
+      { 'williamboman/mason.nvim', config = true },
+      'williamboman/mason-lspconfig.nvim',
+      'hrsh7th/cmp-nvim-lsp', -- Pour l'intégration avec nvim-cmp (auto-completion)
+    },
+    config = function()
+      require('mason').setup()
+
+      -- Installation automatique des serveurs LSP
+      require('mason-lspconfig').setup {
+        ensure_installed = {
+          'tsserver', -- TypeScript/JavaScript
+          'html', -- HTML
+          'cssls', -- CSS/SCSS/LESS
+          'tailwindcss', -- Tailwind CSS
+          'eslint', -- ESLint
+          'sqlls', -- SQL
+          'dockerls', -- Docker
+          'yamlls', -- YAML
+          'jsonls', -- JSON
+          'bashls', -- Bash
+          'marksman', -- Markdown
+          -- Si tu utilises Elixir
+          'elixirls', -- Elixir
+        },
+      }
+
+      -- Configuration des capacités pour LSP avec auto-complétion
+      local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
+      -- Setup des différents LSPs
+      local lspconfig = require 'lspconfig'
+
+      -- Configuration des LSPs spécifiques (tsserver, eslint, etc.)
+      lspconfig.tsserver.setup { capabilities = capabilities }
+      lspconfig.html.setup { capabilities = capabilities }
+      lspconfig.cssls.setup { capabilities = capabilities }
+      lspconfig.tailwindcss.setup { capabilities = capabilities }
+      lspconfig.eslint.setup { capabilities = capabilities }
+      lspconfig.sqlls.setup { capabilities = capabilities }
+      lspconfig.dockerls.setup { capabilities = capabilities }
+      lspconfig.yamlls.setup { capabilities = capabilities }
+      lspconfig.jsonls.setup { capabilities = capabilities }
+      lspconfig.bashls.setup { capabilities = capabilities }
+      lspconfig.marksman.setup { capabilities = capabilities }
+      lspconfig.elixirls.setup { capabilities = capabilities }
+    end,
+  },
+
+  -- Ajouter ESLint et Prettier avec null-ls
+  {
+    'jose-elias-alvarez/null-ls.nvim',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    config = function()
+      local null_ls = require 'null-ls'
+
+      null_ls.setup {
+        sources = {
+          -- Intégration de Prettier pour formater JavaScript/TypeScript/CSS/etc.
+          null_ls.builtins.formatting.prettier,
+          -- Intégration d'ESLint pour JavaScript/TypeScript
+          null_ls.builtins.diagnostics.eslint,
+        },
+      }
+
+      -- Activer le formatage automatique avant sauvegarde
+      vim.api.nvim_create_autocmd('BufWritePre', {
+        pattern = { '*.js', '*.ts', '*.html', '*.css', '*.json' },
+        command = 'lua vim.lsp.buf.format()',
+      })
+    end,
+  },
+
+  {
+    'hrsh7th/nvim-cmp',
+    event = 'InsertEnter',
+    dependencies = {
+      'L3MON4D3/LuaSnip',
+      'saadparwaiz1/cmp_luasnip',
+      'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-path',
+    },
+    config = function()
+      local cmp = require 'cmp'
+      local luasnip = require 'luasnip'
+      luasnip.config.setup {}
+
+      cmp.setup {
+        snippet = {
+          expand = function(args)
+            luasnip.lsp_expand(args.body)
+          end,
+        },
+        mapping = cmp.mapping.preset.insert {
+          ['<C-n>'] = cmp.mapping.select_next_item(),
+          ['<C-p>'] = cmp.mapping.select_prev_item(),
+          ['<C-y>'] = cmp.mapping.confirm { select = true },
+          ['<C-Space>'] = cmp.mapping.complete {},
+          ['<C-l>'] = cmp.mapping(function()
+            if luasnip.expand_or_locally_jumpable() then
+              luasnip.expand_or_jump()
+            end
+          end, { 'i', 's' }),
+          ['<C-h>'] = cmp.mapping(function()
+            if luasnip.locally_jumpable(-1) then
+              luasnip.jump(-1)
+            end
+          end, { 'i', 's' }),
+        },
+        sources = {
+          { name = 'nvim_lsp' },
+          { name = 'luasnip' },
+          { name = 'path' },
+        },
+      }
+    end,
+  },
 
   -- Here is a more advanced example where we pass configuration
   -- options to `gitsigns.nvim`. This is equivalent to the following Lua:
@@ -254,6 +703,120 @@ require('lazy').setup({
         changedelete = { text = '~' },
       },
     },
+  },
+
+  {
+    'neovim/nvim-lspconfig',
+    dependencies = {
+      -- Installation automatique des LSPs
+      { 'williamboman/mason.nvim', config = true },
+      'williamboman/mason-lspconfig.nvim',
+      'hrsh7th/cmp-nvim-lsp', -- Pour l'intégration avec nvim-cmp (auto-completion)
+    },
+    config = function()
+      require('mason').setup()
+
+      -- Installation automatique des serveurs LSP
+      require('mason-lspconfig').setup {
+        ensure_installed = {
+          'tsserver', -- TypeScript/JavaScript
+          'html', -- HTML
+          'cssls', -- CSS/SCSS/LESS
+          'tailwindcss', -- Tailwind CSS
+          'eslint', -- ESLint
+          'sqlls', -- SQL
+          'dockerls', -- Docker
+          'yamlls', -- YAML
+          'jsonls', -- JSON
+          'bashls', -- Bash
+          'marksman', -- Markdown
+        },
+      }
+
+      -- Configuration des capacités pour LSP avec auto-complétion
+      local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
+      -- Setup des différents LSPs
+      local lspconfig = require 'lspconfig'
+
+      -- tsserver pour JavaScript/TypeScript
+      lspconfig.tsserver.setup {
+        capabilities = capabilities,
+      }
+
+      -- html pour HTML
+      lspconfig.html.setup {
+        capabilities = capabilities,
+      }
+
+      -- cssls pour CSS/SCSS/LESS
+      lspconfig.cssls.setup {
+        capabilities = capabilities,
+      }
+
+      -- tailwindcss pour Tailwind CSS
+      lspconfig.tailwindcss.setup {
+        capabilities = capabilities,
+      }
+
+      -- eslint pour JavaScript/TypeScript linting
+      lspconfig.eslint.setup {
+        capabilities = capabilities,
+      }
+
+      -- SQL (sqlls)
+      lspconfig.sqlls.setup {
+        capabilities = capabilities,
+      }
+
+      -- Docker (dockerls)
+      lspconfig.dockerls.setup {
+        capabilities = capabilities,
+      }
+
+      -- YAML (yamlls)
+      lspconfig.yamlls.setup {
+        capabilities = capabilities,
+      }
+
+      -- JSON (jsonls)
+      lspconfig.jsonls.setup {
+        capabilities = capabilities,
+      }
+
+      -- Bash (bashls)
+      lspconfig.bashls.setup {
+        capabilities = capabilities,
+      }
+
+      -- Markdown (marksman)
+      lspconfig.marksman.setup {
+        capabilities = capabilities,
+      }
+    end,
+  },
+
+  {
+    'jose-elias-alvarez/null-ls.nvim',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    config = function()
+      local null_ls = require 'null-ls'
+
+      null_ls.setup {
+        sources = {
+          -- Intégration de Prettier pour formater JavaScript/TypeScript/CSS/etc.
+          null_ls.builtins.formatting.prettier,
+          -- Intégration d'ESLint pour JavaScript/TypeScript
+          null_ls.builtins.diagnostics.eslint,
+        },
+      }
+
+      -- Activer le formatage automatique au sauvegarde
+      vim.api.nvim_create_autocmd('BufWritePre', {
+        pattern = { '*.js', '*.ts', '*.html', '*.css', '*.json' },
+        command = 'lua vim.lsp.buf.format()',
+      })
+    end,
   },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
@@ -954,3 +1517,32 @@ require('lazy').setup({
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+--
+--
+--
+vim.keymap.set('n', '<leader>t', '<CMD>lua require("FTerm").toggle()<CR>', { desc = 'Ouvre/ferme le terminal flottant' })
+vim.keymap.set('t', '<leader>t', '<C-\\><C-n><CMD>lua require("FTerm").toggle()<CR>', { desc = 'Ouvre/ferme le terminal flottant (mode terminal)' })
+
+vim.opt.tabstop = 2
+vim.opt.shiftwidth = 2
+vim.opt.expandtab = true
+
+-- Ouvrir/fermer Spectre
+vim.keymap.set('n', '<leader>S', '<cmd>lua require("spectre").toggle()<CR>', {
+  desc = 'Toggle Spectre',
+})
+
+-- Rechercher le mot sous le curseur
+vim.keymap.set('n', '<leader>sw', '<cmd>lua require("spectre").open_visual({select_word=true})<CR>', {
+  desc = 'Search current word',
+})
+
+-- Rechercher le mot sélectionné visuellement
+vim.keymap.set('v', '<leader>sw', '<esc><cmd>lua require("spectre").open_visual()<CR>', {
+  desc = 'Search selected word',
+})
+
+-- Rechercher dans le fichier courant
+vim.keymap.set('n', '<leader>sp', '<cmd>lua require("spectre").open_file_search({select_word=true})<CR>', {
+  desc = 'Search in current file',
+})
