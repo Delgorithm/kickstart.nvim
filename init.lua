@@ -242,7 +242,6 @@ require('lazy').setup({
   --
   --
 
-
   {
     'utilyre/barbecue.nvim',
     name = 'barbecue',
@@ -456,7 +455,6 @@ require('lazy').setup({
           },
         },
         filesystem = {
-          follow_current_file = true, -- Suivre automatiquement le fichier courant
           hijack_netrw_behavior = 'open_default', -- Remplacer netrw
           filtered_items = {
             hide_dotfiles = true, -- Masquer les fichiers cachés
@@ -687,6 +685,59 @@ require('lazy').setup({
     end,
   },
 
+  {
+    'hrsh7th/nvim-cmp',
+    event = 'InsertEnter',
+    dependencies = {
+      'L3MON4D3/LuaSnip',
+      'saadparwaiz1/cmp_luasnip',
+      'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-path',
+    },
+    config = function()
+      local cmp = require 'cmp'
+      local luasnip = require 'luasnip'
+      luasnip.config.setup {}
+
+      cmp.setup {
+        snippet = {
+          expand = function(args)
+            luasnip.lsp_expand(args.body)
+          end,
+        },
+        mapping = cmp.mapping.preset.insert {
+          ['<C-n>'] = cmp.mapping.select_next_item(),
+          ['<C-p>'] = cmp.mapping.select_prev_item(),
+          ['<C-y>'] = cmp.mapping.confirm { select = true },
+          ['<C-Space>'] = cmp.mapping.complete {},
+        },
+        sources = {
+          { name = 'nvim_lsp' },
+          { name = 'luasnip' },
+          { name = 'path' },
+        },
+      }
+    end,
+  },
+
+  -- Configuration LSP
+  {
+    'neovim/nvim-lspconfig',
+    dependencies = {
+      'williamboman/mason.nvim',
+      'williamboman/mason-lspconfig.nvim',
+      'hrsh7th/cmp-nvim-lsp',
+    },
+    config = function()
+      -- Configuration des LSPs
+      local lspconfig = require 'lspconfig'
+      lspconfig.tsserver.setup {}
+      lspconfig.html.setup {}
+      lspconfig.cssls.setup {}
+      lspconfig.tailwindcss.setup {}
+    end,
+  },
+
   -- Here is a more advanced example where we pass configuration
   -- options to `gitsigns.nvim`. This is equivalent to the following Lua:
   --    require('gitsigns').setup({ ... })
@@ -816,6 +867,92 @@ require('lazy').setup({
         pattern = { '*.js', '*.ts', '*.html', '*.css', '*.json' },
         command = 'lua vim.lsp.buf.format()',
       })
+    end,
+  },
+
+  {
+    'L3MON4D3/LuaSnip', -- Engine de snippets
+    dependencies = {
+      'saadparwaiz1/cmp_luasnip', -- Intégration entre nvim-cmp et LuaSnip
+    },
+  },
+
+  {
+    'hrsh7th/nvim-cmp',
+    event = 'InsertEnter',
+    dependencies = {
+      'L3MON4D3/LuaSnip', -- Moteur de snippets
+      'saadparwaiz1/cmp_luasnip', -- Intégration LuaSnip avec nvim-cmp
+      'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-path',
+    },
+    config = function()
+      local cmp = require 'cmp'
+      local luasnip = require 'luasnip'
+
+      -- Configuration de LuaSnip pour l'utilisation des snippets
+      luasnip.config.setup {}
+
+      -- Setup de nvim-cmp avec les sources et les mappings pour la complétion
+      cmp.setup {
+        snippet = {
+          expand = function(args)
+            luasnip.lsp_expand(args.body) -- Utilise LuaSnip pour l'extension des snippets
+          end,
+        },
+        mapping = cmp.mapping.preset.insert {
+          ['<C-n>'] = cmp.mapping.select_next_item(), -- Navigue vers le prochain item
+          ['<C-p>'] = cmp.mapping.select_prev_item(), -- Navigue vers l'item précédent
+          ['<C-y>'] = cmp.mapping.confirm { select = true }, -- Confirmer la suggestion
+          ['<C-Space>'] = cmp.mapping.complete {}, -- Active manuellement la complétion
+        },
+        sources = {
+          { name = 'nvim_lsp' }, -- Complétion basée sur LSP
+          { name = 'luasnip' }, -- Complétion basée sur les snippets LuaSnip
+          { name = 'path' }, -- Complétion des chemins de fichiers
+        },
+      }
+
+      -- Configuration des snippets HTML avec LuaSnip
+      luasnip.add_snippets('html', {
+        -- Snippet pour <p></p>
+        luasnip.snippet('p', {
+          luasnip.text_node { '<p>', '' },
+          luasnip.text_node { '</p>', '' },
+        }),
+
+        -- Snippet pour <section></section>
+        luasnip.snippet('section', {
+          luasnip.text_node { '<section>', '' },
+          luasnip.text_node { '</section>', '' },
+        }),
+      })
+    end,
+  },
+
+  -- Configuration LSP
+  {
+    'neovim/nvim-lspconfig',
+    dependencies = {
+      'williamboman/mason.nvim',
+      'williamboman/mason-lspconfig.nvim',
+      'hrsh7th/cmp-nvim-lsp',
+    },
+    config = function()
+      -- Configuration des LSPs pour différents langages
+      local lspconfig = require 'lspconfig'
+      lspconfig.tsserver.setup {} -- TypeScript
+      lspconfig.html.setup {} -- HTML
+      lspconfig.cssls.setup {} -- CSS
+      lspconfig.tailwindcss.setup {} -- Tailwind CSS
+    end,
+  },
+
+  -- Optionnel : Snippets supplémentaires pour plusieurs langages
+  {
+    'rafamadriz/friendly-snippets',
+    config = function()
+      require('luasnip.loaders.from_vscode').lazy_load() -- Charger des snippets prédéfinis
     end,
   },
 
